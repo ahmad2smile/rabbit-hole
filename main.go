@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"os"
 	"strings"
+	"rabbit-hole/errorutils"
+	"rabbit-hole/dedupeList"
 )
 
 const anagram string = "poultry outwits ants"
@@ -16,13 +18,15 @@ func main() {
 	file, err := os.Open("./wordlist")
 	optimizedFile, createErr := os.OpenFile("./optimized-wordlist", os.O_WRONLY|os.O_CREATE, 0666)
 
-	throwError(err)
-	throwError(createErr)
+	errorutils.ThrowError(err)
+	errorutils.ThrowError(createErr)
 
 	defer file.Close()
 	defer optimizedFile.Close()
 
 	scanner := bufio.NewScanner(file)
+
+	var list []string
 
 	for scanner.Scan() {
 		word := scanner.Text()
@@ -42,14 +46,14 @@ func main() {
 		}
 
 		if isValidLine {
-			optimizedFile.WriteString(word + "\n")
+			list = append(list, word)
 		}
 	}
 
-}
+	uniqueList := dedupeList.RemoveDupe(list)
 
-func throwError(err error) {
-	if err != nil {
-		panic(err)
+	for _, word := range uniqueList {
+		optimizedFile.WriteString(word + "\n")
 	}
+	
 }

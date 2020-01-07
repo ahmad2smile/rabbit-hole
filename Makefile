@@ -1,2 +1,2 @@
-optimize:
-	go run optimize.go
+run:
+	go run main.go

@@ -3,9 +3,11 @@ package main
 import (
 	"bufio"
 	"os"
+	"fmt"
 	"strings"
 	"rabbit-hole/errorutils"
 	"rabbit-hole/dedupeList"
+	"rabbit-hole/validation"
 )
 
 const anagram string = "poultry outwits ants"
@@ -30,27 +32,15 @@ func main() {
 
 	for scanner.Scan() {
 		word := scanner.Text()
-		isValidLine := true
-
-		isValidLine = len(word) <= anagramCharLen
-
-		if isValidLine {
-			for _, char := range word {
-				isValidLine = strings.Contains(anagram, string(char))
-				isValidLine = (strings.Count(word, string(char)) <= strings.Count(anagram, string(char)))
-
-				if !isValidLine {
-					break
-				}
-			}
-		}
-
-		if isValidLine {
+		
+		if validation.IsValidWord(word, anagram, anagramCharLen) {
 			list = append(list, word)
 		}
 	}
 
 	uniqueList := dedupeList.RemoveDupe(list)
+
+	fmt.Println("Final Words:", len(uniqueList))
 
 	for _, word := range uniqueList {
 		optimizedFile.WriteString(word + "\n")
